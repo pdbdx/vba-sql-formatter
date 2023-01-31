@@ -3,7 +3,17 @@ A4セルにSQLを貼り付けてFormatボタンをクリックするとB4セル�
 ```
 Sub ButtonClick()
     Dim sql As String
+    
+    sql = Replace(sql, vbCrLf, " ")
+    sql = Replace(sql, vbCr & vbCr, " ")
+    sql = Replace(sql, vbLf & vbLf, " ")
+    
     sql = FormatSQL(Range("A4").Value)
+    
+    Do While InStr(sql, vbCrLf & vbCrLf) > 0
+        ' 無駄な改行を削除
+         sql = Replace(sql, vbCrLf & vbCrLf, vbCrLf)
+    Loop
     
     Dim lines() As String
     lines = Split(sql, vbCrLf)
@@ -11,6 +21,7 @@ Sub ButtonClick()
         ' 1行ずつTrimする
         lines(i) = Trim(lines(i))
     Next
+    
     Range("B4").Value = Join(lines, vbCrLf)
 End Sub
 
