@@ -3,12 +3,12 @@ A4セルにSQLを貼り付けてFormatボタンをクリックするとB4セル�
 ```
 Sub ButtonClick()
     Dim sql As String
-    
+    sql = Range("A4").Value
     sql = Replace(sql, vbCrLf, " ")
     sql = Replace(sql, vbCr & vbCr, " ")
     sql = Replace(sql, vbLf & vbLf, " ")
     
-    sql = FormatSQL(Range("A4").Value)
+    sql = FormatSQL(sql)
     
     Do While InStr(sql, vbCrLf & vbCrLf) > 0
         ' 無駄な改行を削除
@@ -20,6 +20,7 @@ Sub ButtonClick()
     For i = 0 To UBound(lines)
         ' 1行ずつTrimする
         lines(i) = Trim(lines(i))
+        lines(i) = SpaceReplace(lines(i))
     Next
     
     Range("B4").Value = Join(lines, vbCrLf)
@@ -27,7 +28,6 @@ End Sub
 
 Function FormatSQL(sql As String) As String
     sql = UCase(sql)
-    sql = SpaceReplace(sql)
     
     sql = SqlReplace(sql, "SELECT", False, True, False)
     sql = SqlReplace(sql, ",", False, True, False)
@@ -40,16 +40,16 @@ Function FormatSQL(sql As String) As String
     sql = SqlReplace(sql, "LEFT JOIN", True, False, True)
     sql = SqlReplace(sql, "FULL JOIN", True, False, True)
     sql = SqlReplace(sql, "ON", False, True, True)
+    sql = SqlReplace(sql, "AND", True, False, True)
+    sql = SqlReplace(sql, "OR", True, False, True)
     
     sql = SqlReplace(sql, "INSERT INTO", False, True, False)
-    sql = SqlReplace(sql, "VALUES", True, True, True)
+    sql = SqlReplace(sql, "VALUES", True, True, False)
     
     sql = SqlReplace(sql, "UPDATE", False, True, False)
     sql = SqlReplace(sql, "SET", True, True, True)
     
     sql = SqlReplace(sql, "DELETE", False, True, False)
-    
-    sql = ParenthesesReplace(sql)
 
     FormatSQL = sql
 End Function
@@ -68,7 +68,7 @@ Function SqlReplace(sql As String, keyword As String, addBreakBefore As Boolean,
     RegEx.Global = True
     
     Dim replacedText As String
-    replacedText = keyword
+    replacedText = " " & keyword & " "
   
     
     If addBreakBefore Then
@@ -93,12 +93,5 @@ Function SpaceReplace(sql As String) As String
     RegEx.Global = True
     sql = RegEx.Replace(sql, " ")
     SpaceReplace = sql
-End Function
-
-' ()を改行
-Function ParenthesesReplace(sql As String) As String
-    sql = Replace(sql, "(", vbCrLf & "(")
-    sql = Replace(sql, ")", ")" & vbCrLf)
-    ParenthesesReplace = sql
 End Function
 ```
