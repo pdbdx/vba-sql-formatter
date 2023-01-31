@@ -33,7 +33,7 @@ Function FormatSQL(sql As String) As String
     sql = SqlReplace(sql, ",", False, True, False)
     sql = SqlReplace(sql, "FROM", True, True, True)
     sql = SqlReplace(sql, "WHERE", True, True, True)
-    sql = SqlReplace(sql, "GROUP", True, True, True)
+    sql = SqlReplace(sql, "GROUP BY", True, True, True)
     sql = SqlReplace(sql, "HAVING", True, True, True)
     sql = SqlReplace(sql, "ORDER BY", True, True, True)
     sql = SqlReplace(sql, "INNER JOIN ", True, False, True)
